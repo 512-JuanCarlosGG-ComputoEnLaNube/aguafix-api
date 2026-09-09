@@ -1,0 +1,58 @@
+### Variables
+@baseUrl = http://localhost:3000
+
+### 1. Registrar Usuario (Auth)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Juan Carlos Gallegos",
+  "email": "carlos.gallegos@aguafix.local",
+  "password": "Password123*",
+  "isNotificationEnabled": true
+}
+
+### 2. Iniciar Sesión - Exitoso (Auth)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos.gallegos@aguafix.local",
+  "password": "Password123*"
+}
+
+### 3. Iniciar Sesión - Credenciales Inválidas (Debe retornar 400 BadRequestException)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos.gallegos@aguafix.local",
+  "password": "WrongPassword"
+}
+
+### 4. Crear Reporte de Fuga (POST /reports)
+# Guarda en la tabla WATER_REPORT y envía correo con plantilla HTML a la cuadrilla
+POST {{baseUrl}}/reports
+Content-Type: application/json
+
+{
+  "address": "Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro",
+  "description": "Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.",
+  "severity": "high",
+  "reporterPhone": "4491234567"
+}
+
+### 5. Crear Reporte - Severidad Media
+POST {{baseUrl}}/reports
+Content-Type: application/json
+
+{
+  "address": "Calle Las Flores #120, Col. San Marcos",
+  "description": "Fisura en toma domiciliaria exterior con escurrimiento hacia la calle.",
+  "severity": "medium",
+  "reporterPhone": "4499876543"
+}
+
+### 6. Listar Todos los Reportes (GET /reports)
+GET {{baseUrl}}/reports
+Content-Type: application/json

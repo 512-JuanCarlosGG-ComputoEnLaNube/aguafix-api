@@ -1,98 +1,233 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# AguaFix API 💧
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API desarrollada en **NestJS (v11)** con **TypeScript**, diseñada para que los ciudadanos reporten fugas de agua en la vía pública. Al crear un reporte, el sistema lo persiste en **PostgreSQL** mediante **TypeORM** con migraciones (`synchronize: false`) y despacha automáticamente una notificación por correo electrónico a la cuadrilla de mantenimiento con una plantilla HTML legible y estilizada construida con **Nodemailer**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Tecnologías y Arquitectura
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Framework:** [NestJS](https://nestjs.com/) v11 (TypeScript)
+- **Base de Datos:** PostgreSQL 16 ejecutado mediante Docker Compose
+- **ORM:** TypeORM con control estricto de migraciones (`synchronize: false`)
+- **Variables de Entorno:** Tipado estricto y validación en tiempo de arranque mediante `env-var` + `dotenv` ([`src/config/envs.ts`](src/config/envs.ts))
+- **Seguridad:** Hasheo y verificación de contraseñas con `bcryptjs`
+- **Mailing:** `nodemailer` configurado mediante transporter con credenciales de entorno y plantilla HTML con estilos inline ([`src/reports/templates/report.template.ts`](src/reports/templates/report.template.ts))
+- **Arquitectura Modular:** `Module -> Controller -> Service -> Repository` con `ValidationPipe` global y DTOs para cada endpoint.
 
-## Project setup
+---
 
+## 🗄️ Modelo de Base de Datos
+
+### 1. Tabla `SYSTEM_USER` (Entidad `User`)
+| Campo | Tipo | Restricción / Comentario |
+|---|---|---|
+| `id` | SERIAL | Primary Key autogenerado |
+| `name` | VARCHAR | Nombre completo del usuario |
+| `email` | VARCHAR | Único, correo electrónico |
+| `password` | VARCHAR | Contraseña cifrada con `bcryptjs` |
+| `isNotificationEnabled` | BOOLEAN | Por defecto `true` |
+
+### 2. Tabla `WATER_REPORT` (Entidad `Report`)
+| Campo | Tipo | Restricción / Comentario |
+|---|---|---|
+| `id` | SERIAL | Primary Key autogenerado |
+| `address` | VARCHAR | Dirección o referencia de la fuga |
+| `description` | TEXT | Detalle de lo observado |
+| `severity` | VARCHAR | Severidad: `low`, `medium`, `high` |
+| `reporterPhone` | VARCHAR | Teléfono de contacto del ciudadano |
+| `isResolved` | BOOLEAN | Inicia en `false` |
+| `createdAt` | TIMESTAMP | Fecha y hora del reporte (por defecto `now()`) |
+
+---
+
+## ⚙️ Requisitos Previos
+
+- [Node.js](https://nodejs.org/) (v20 o superior)
+- [Docker](https://www.docker.com/) y Docker Compose (para la base de datos PostgreSQL)
+
+---
+
+## 🛠️ Instalación y Configuración
+
+### 1. Clonar el repositorio
 ```bash
-$ npm install
+git clone https://github.com/512-JuanCarlosGG-ComputoEnLaNube/aguafix-api.git
+cd aguafix-api
 ```
 
-## Compile and run the project
-
+### 2. Instalar dependencias
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
+### 3. Configurar variables de entorno
+Crea tu archivo `.env` tomando como base el archivo `.env.template`:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.template .env
 ```
 
-## Deployment
+Configura tus variables en `.env`:
+```env
+PORT=3000
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Base de datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=aguafixdb
+DB_USER=postgres
+DB_PASSWORD=secret123
+DB_TYPE=postgres
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Servicio de Correo (Gmail / App Password o SMTP)
+MAILER_SERVICE=Gmail
+MAILER_USER=tu_correo@gmail.com
+MAILER_PASSWORD=tu_contraseña_de_aplicacion
+MAINTENANCE_EMAIL=cuadrilla_mantenimiento@aguafix.local
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 4. Levantar la base de datos con Docker
+```bash
+docker compose up -d
+```
 
-## Resources
+### 5. Ejecutar migraciones de TypeORM
+```bash
+npm run migration:run
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 6. Iniciar la aplicación
+Modo desarrollo:
+```bash
+npm run start:dev
+```
+La API estará disponible en `http://localhost:3000`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 📬 Endpoints de la API
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Autenticación (`/auth`)
 
-## Stay in touch
+#### `POST /auth/register`
+Registra un nuevo usuario en la tabla `SYSTEM_USER` cifrando la contraseña con `bcryptjs`.
+- **Body (`CreateUserDto`):**
+```json
+{
+  "name": "Juan Carlos Gallegos",
+  "email": "carlos.gallegos@aguafix.local",
+  "password": "Password123*",
+  "isNotificationEnabled": true
+}
+```
+- **Respuesta Exitosa (201 Created):**
+```json
+{
+  "message": "Usuario registrado exitosamente",
+  "user": {
+    "id": 1,
+    "name": "Juan Carlos Gallegos",
+    "email": "carlos.gallegos@aguafix.local",
+    "isNotificationEnabled": true
+  }
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### `POST /auth/login`
+Inicia sesión validando las credenciales contra la base de datos. Si las credenciales no coinciden, retorna un error claro `400 Bad Request`.
+- **Body (`LoginDto`):**
+```json
+{
+  "email": "carlos.gallegos@aguafix.local",
+  "password": "Password123*"
+}
+```
+- **Respuesta Exitosa (200 OK):**
+```json
+{
+  "message": "Inicio de sesión exitoso",
+  "user": {
+    "id": 1,
+    "name": "Juan Carlos Gallegos",
+    "email": "carlos.gallegos@aguafix.local",
+    "isNotificationEnabled": true
+  }
+}
+```
+- **Respuesta con Credenciales Inválidas (400 Bad Request):**
+```json
+{
+  "message": "Credenciales inválidas: correo o contraseña incorrectos",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Reportes de Fugas (`/reports`)
+
+#### `POST /reports`
+Crea un nuevo reporte en la tabla `WATER_REPORT` y **despacha automáticamente un correo electrónico** a la cuadrilla de mantenimiento con el template HTML estilizado.
+- **Body (`CreateReportDto`):**
+```json
+{
+  "address": "Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro",
+  "description": "Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.",
+  "severity": "high",
+  "reporterPhone": "4491234567"
+}
+```
+- **Respuesta Exitosa (201 Created):**
+```json
+{
+  "id": 1,
+  "address": "Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro",
+  "description": "Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.",
+  "severity": "high",
+  "reporterPhone": "4491234567",
+  "isResolved": false,
+  "createdAt": "2026-03-09T21:50:00.000Z"
+}
+```
+
+#### `GET /reports`
+Retorna el listado completo de todos los reportes ordenados cronológicamente (más recientes primero).
+- **Respuesta Exitosa (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "address": "Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro",
+    "description": "Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.",
+    "severity": "high",
+    "reporterPhone": "4491234567",
+    "isResolved": false,
+    "createdAt": "2026-03-09T21:50:00.000Z"
+  }
+]
+```
+
+---
+
+## 🧪 Pruebas de los Endpoints
+
+El repositorio incluye dos opciones listas para probar los endpoints:
+1. **Archivo HTTP para VS Code:** Abre [`requests.http`](requests.http) y usa la extensión *REST Client* o *Thunder Client* para enviar las peticiones directamente.
+2. **Colección de Postman:** Importa el archivo [`aguafix-api.postman_collection.json`](aguafix-api.postman_collection.json) en Postman.
+
+---
+
+## 📹 Guía / Checklist para el Video de Demostración
+
+Para el entregable del video demostrativo de la API funcionando:
+1. **Presentación:** Breve introducción mostrando la estructura de carpetas modular (`auth`, `users`, `reports`, `email`, `db`, `config`).
+2. **Base de Datos y Migraciones:** Mostrar el contenedor de Docker corriendo (`docker ps`) y la ejecución de las migraciones (`npm run migration:run`).
+3. **Arranque:** Ejecutar `npm run start:dev` y mostrar en consola que la aplicación levantó en el puerto configurado.
+4. **Demostración de Endpoints (Postman / REST Client):**
+   - Registrar un usuario (`POST /auth/register`).
+   - Intentar iniciar sesión con contraseña incorrecta para verificar la `BadRequestException` (`400 Bad Request`).
+   - Iniciar sesión correctamente (`POST /auth/login` con `200 OK`).
+   - Crear un reporte de fuga de agua (`POST /reports`).
+   - Mostrar en la consola del servidor el log de guardado y de envío del correo.
+   - Mostrar el inbox del correo receptor con el template HTML renderizado (tabla estilizada, badge de severidad y datos de contacto).
+   - Consultar la lista de reportes (`GET /reports`) para demostrar la persistencia en la tabla `WATER_REPORT`.

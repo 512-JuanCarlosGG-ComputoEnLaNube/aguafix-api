@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "AguaFix API",
+    "description": "Colección de endpoints para AguaFix API - Reportes de fugas de agua y autenticación",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Carlos Gallegos\",\n  \"email\": \"carlos.gallegos@aguafix.local\",\n  \"password\": \"Password123*\",\n  \"isNotificationEnabled\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login - Success",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carlos.gallegos@aguafix.local\",\n  \"password\": \"Password123*\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Invalid Credentials (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carlos.gallegos@aguafix.local\",\n  \"password\": \"WrongPassword\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Create Report (POST /reports)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro\",\n  \"description\": \"Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.\",\n  \"severity\": \"high\",\n  \"reporterPhone\": \"4491234567\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/reports",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["reports"]
+            }
+          }
+        },
+        {
+          "name": "List Reports (GET /reports)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/reports",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["reports"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
