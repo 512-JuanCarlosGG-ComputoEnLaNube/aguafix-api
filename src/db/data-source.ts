@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import type { DataSourceOptions } from 'typeorm';
 import { envs } from '../config/envs';
 import { User } from '../users/entities/user.entity';
+import { Report } from '../reports/entities/report.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -10,7 +11,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: envs.DB_NAME,
   username: envs.DB_USER,
   password: envs.DB_PASSWORD,
-  entities: [User],
+  entities: [User, Report],
   synchronize: false,
   migrations: [__dirname + '/migrations/*.js'],
 };
