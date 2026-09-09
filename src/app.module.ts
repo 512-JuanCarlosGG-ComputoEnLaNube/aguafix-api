@@ -5,12 +5,14 @@ import { AppService } from './app.service';
 import { dataSourceOptions } from './db/data-source';
 import { EmailModule } from './email/email.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
     EmailModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
