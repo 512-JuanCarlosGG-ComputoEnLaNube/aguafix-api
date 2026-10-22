@@ -1,7 +1,13 @@
 import { CreateReportDto } from '../dto/create-report.dto';
 
-export function generateReportTemplate(dto: CreateReportDto): string {
-  const severityColors: Record<string, { bg: string; text: string; label: string }> = {
+export function generateReportTemplate(
+  dto: CreateReportDto,
+  photoUrl: string,
+): string {
+  const severityColors: Record<
+    string,
+    { bg: string; text: string; label: string }
+  > = {
     low: { bg: '#d4edda', text: '#155724', label: 'BAJA (Low)' },
     medium: { bg: '#fff3cd', text: '#856404', label: 'MEDIA (Medium)' },
     high: { bg: '#f8d7da', text: '#721c24', label: 'ALTA (High)' },
@@ -43,7 +49,7 @@ export function generateReportTemplate(dto: CreateReportDto): string {
 
     <!-- Tarjeta de Detalles -->
     <tr>
-      <td style="padding: 10px 25px 25px 25px;">
+      <td style="padding: 10px 25px 15px 25px;">
         <table width="100%" cellspacing="0" cellpadding="12" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
           <tr>
             <td width="35%" style="font-weight: bold; color: #475569; border-bottom: 1px solid #e2e8f0;">📍 Dirección / Referencia:</td>
@@ -68,6 +74,19 @@ export function generateReportTemplate(dto: CreateReportDto): string {
             </td>
           </tr>
         </table>
+      </td>
+    </tr>
+
+    <!-- Evidencia Fotográfica -->
+    <tr>
+      <td style="padding: 0 25px 25px 25px;">
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; text-align: center;">
+          <p style="margin: 0 0 12px 0; font-weight: bold; color: #475569; font-size: 14px; text-align: left;">📷 Evidencia Fotográfica de la Fuga:</p>
+          <img src="${photoUrl}" alt="Fotografía de la fuga de agua reportada" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #cbd5e1; display: block; margin: 0 auto;" />
+          <p style="margin: 10px 0 0 0; font-size: 12px;">
+            <a href="${photoUrl}" target="_blank" style="color: #0077b6; text-decoration: underline;">Ver imagen en tamaño completo</a>
+          </p>
+        </div>
       </td>
     </tr>
 
