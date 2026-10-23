@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "AguaFix API",
-    "description": "Colección de endpoints para AguaFix API - Reportes de fugas de agua y autenticación",
+    "description": "Colección de endpoints para AguaFix API - Reportes de fugas de agua con evidencia fotográfica en AWS S3 y autenticación",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -83,18 +83,78 @@
       "name": "Reports",
       "item": [
         {
-          "name": "Create Report (POST /reports)",
+          "name": "Create Report with Photo (POST /reports - multipart/form-data)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"address\": \"Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro\",\n  \"description\": \"Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.\",\n  \"severity\": \"high\",\n  \"reporterPhone\": \"4491234567\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "address",
+                  "value": "Av. Hidalgo esq. Calle 5 de Mayo #402, Zona Centro",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Fuga de agua potable considerable en la banqueta, brota agua limpia con presión moderada.",
+                  "type": "text"
+                },
+                {
+                  "key": "severity",
+                  "value": "high",
+                  "type": "text"
+                },
+                {
+                  "key": "reporterPhone",
+                  "value": "4491234567",
+                  "type": "text"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3000/reports",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["reports"]
+            }
+          }
+        },
+        {
+          "name": "Create Report without Photo - Should Fail (400 BadRequestException)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "address",
+                  "value": "Calle Las Flores #120, Col. San Marcos",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Fisura en toma domiciliaria exterior con escurrimiento hacia la calle.",
+                  "type": "text"
+                },
+                {
+                  "key": "severity",
+                  "value": "medium",
+                  "type": "text"
+                },
+                {
+                  "key": "reporterPhone",
+                  "value": "4499876543",
+                  "type": "text"
+                }
+              ]
             },
             "url": {
               "raw": "http://localhost:3000/reports",

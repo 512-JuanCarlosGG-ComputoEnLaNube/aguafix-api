@@ -30,8 +30,7 @@ Content-Type: application/json
   "password": "WrongPassword"
 }
 
-### 4. Crear Reporte de Fuga (POST /reports)
-# Guarda en la tabla WATER_REPORT y envía correo con plantilla HTML a la cuadrilla
+### 4. Crear Reporte de Fuga sin Foto (Debe retornar 400 BadRequestException)
 POST {{baseUrl}}/reports
 Content-Type: application/json
 
@@ -42,17 +41,6 @@ Content-Type: application/json
   "reporterPhone": "4491234567"
 }
 
-### 5. Crear Reporte - Severidad Media
-POST {{baseUrl}}/reports
-Content-Type: application/json
-
-{
-  "address": "Calle Las Flores #120, Col. San Marcos",
-  "description": "Fisura en toma domiciliaria exterior con escurrimiento hacia la calle.",
-  "severity": "medium",
-  "reporterPhone": "4499876543"
-}
-
-### 6. Listar Todos los Reportes (GET /reports)
+### 5. Listar Todos los Reportes (GET /reports - incluye photoUrl)
 GET {{baseUrl}}/reports
 Content-Type: application/json
