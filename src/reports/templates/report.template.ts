@@ -33,7 +33,7 @@ export function generateReportTemplate(
     <tr>
       <td style="background-color: #0077b6; padding: 25px; text-align: center; color: #ffffff;">
         <h1 style="margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 0.5px;">💧 AGUAFIX - MUNICIPIO</h1>
-        <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Alerta de Reporte de Fuga de Agua en Vía Pública</p>
+        <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Alerta de Reporte de Fuga de Agua</p>
       </td>
     </tr>
 
